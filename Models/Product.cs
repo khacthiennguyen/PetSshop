@@ -1,13 +1,15 @@
-namespace WebApp.Models;
-
-public class Product
+namespace WebApp.Models
 {
-    public string ProductId {get;set;} = null!;
-    public string ProductName {get;set;} = null!;
-    public decimal ProductPrice {get;set;} 
-    public int ProductStar {get;set;} 
-    public string ProductDesciption {get;set;} = null!;
-    public string ProductStatus {get;set;} = null!;
-    public int ProductQuantity {get;set;} 
-    public string CategoryId {get;set;} = null!;
+    public class Product
+    {
+        public string ProductId { get; set; } = null!;
+        public string ProductName { get; set; } = null!;
+        public string CategoryId { get; set; } = null!;
+        public int ProductStar { get; set; }
+        public int ProductQuantity { get; set; }
+        public decimal ProductPrice { get; set; }
+        public string ProductDescription { get; set; } = null!;
+        public string ProductStatus { get; set; } = null!;
+        public string ProductImg { get; set; } = null!;
+    }
 }

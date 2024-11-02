@@ -14,9 +14,9 @@ public class SiteProvider : BaseProvider
 
 
 
-    // ProductRepository? product;
-    // public ProductRepository Product => product
-    // ??= new ProductRepository(Connection);
+    ProductRepository? product;
+    public ProductRepository Product => product
+    ??= new ProductRepository(Connection);
 
     // SupplierRepository? supplier;
     // public SupplierRepository Supplier => supplier

@@ -9,49 +9,51 @@ public class ProductRepository : BaseRepository
     {
     }
 
+    // Lấy danh sách tất cả sản phẩm
     public IEnumerable<Product> GetProducts()
     {
-        return connection.Query<Product>("SELECT * FROM Category");
+        return connection.Query<Product>("SELECT * FROM Product");
     }
 
+    // Thêm sản phẩm mới
     public int Add(Product obj)
     {
+        // Kiểm tra sản phẩm đã tồn tại hay chưa
         var existingProduct = connection.QueryFirstOrDefault<Product>(
-            "SELECT * FROM Product WHERE ProdcutId = @ProdcutId", new { obj.ProductId});
+            "SELECT * FROM Product WHERE ProductId = @ProductId", new { ProductId = obj.ProductId });
 
         if (existingProduct != null)
         {
-            return -1;
+            return -1; // Sản phẩm đã tồn tại
         }
 
+        // Thêm sản phẩm qua stored procedure
         return connection.Execute("AddProduct", obj, commandType: CommandType.StoredProcedure);
-
     }
 
-
+    // Xóa sản phẩm
     public int Delete(string id)
     {
-
         return connection.Execute("DELETE FROM Product WHERE ProductId = @id", new { id });
-
     }
 
+    // Cập nhật sản phẩm
     public int Update(Product obj)
     {
-        var existingCategory = connection.QueryFirstOrDefault<Category>(
-            "SELECT * FROM Product WHERE ProductId = @ProductId", new { obj.ProductId });
+        // Kiểm tra sản phẩm tồn tại
+        var existingProduct = connection.QueryFirstOrDefault<Product>(
+            "SELECT * FROM Product WHERE ProductId = @ProductId", new { ProductId = obj.ProductId });
 
-        if (existingCategory == null)
+        if (existingProduct == null)
         {
-            return -1;
+            return -1; // Sản phẩm không tồn tại
         }
 
+        // Cập nhật thông tin sản phẩm
         return connection.Execute(
-            "UPDATE Category SET CategoryName = @CategoryName, CategoryDescription = @CategoryDescription WHERE CategoryId = @CategoryId",
+            "UPDATE Product SET ProductName = @ProductName, ProductStar = @ProductStar, ProductPrice = @ProductPrice, " +
+            "ProductDescription = @ProductDescription, ProductStatus = @ProductStatus, ProductQuantity = @ProductQuantity, " +
+            "CategoryId = @CategoryId, ProductImg = @ProductImg WHERE ProductId = @ProductId",
             obj);
     }
-
-
-
-
 }
