@@ -1,0 +1,140 @@
+@model List<WebApp.Models.Category>
+
+<!-- Page Heading -->
+<h1 class="h3 mb-4 text-gray-800">Product > Category</h1>
+
+<!-- Hiển thị thông báo -->
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+}
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+}
+
+<!-- Begin Page Content -->
+<div class="container-fluid">
+    <h1 class="h3 mb-2 text-gray-800">Categories</h1>
+
+    <!-- Add Category Button -->
+    <button type="button" class="btn btn-success mb-3" data-toggle="modal" data-target="#addCategoryModal">
+        Add Category
+    </button>
+
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Category Id</th>
+                            <th>Category Name</th>
+                            <th>Category Description</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var category in Model)
+                        {
+                            <tr>
+                                <td>@category.CategoryId</td>
+                                <td>@category.CategoryName</td>
+                                <td>@category.CategoryDescription</td>
+                                <td>
+                                    <button type="button" class="btn btn-sm btn-primary"
+                                        onclick="editCategory('@category.CategoryId', '@category.CategoryName', '@category.CategoryDescription')">Edit</button>
+                                    <form asp-action="DeleteCategory" method="post" style="display:inline;">
+                                        <input type="hidden" name="id" value="@category.CategoryId" />
+                                        <button type="submit" class="btn btn-sm btn-danger"
+                                            onclick="return confirm('Are you sure you want to delete this category?');">Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Category Modal -->
+<div class="modal fade" id="addCategoryModal" tabindex="-1" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addCategoryModalLabel">Add New Category</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                @if (TempData["ErrorMessage"] != null)
+                {
+                    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+                }
+                <form asp-action="AddCategory" method="post">
+                    <div class="form-group">
+                        <label for="CategoryId">Category Id</label>
+                        <input type="text" class="form-control" id="CategoryId" name="CategoryId" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="CategoryName">Category Name</label>
+                        <input type="text" class="form-control" id="CategoryName" name="CategoryName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="CategoryDescription">Category Description</label>
+                        <textarea class="form-control" id="CategoryDescription" name="CategoryDescription"
+                            rows="3"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Category Modal -->
+<div class="modal fade" id="editCategoryModal" tabindex="-1" aria-labelledby="editCategoryModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editCategoryModalLabel">Edit Category </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form asp-action="UpdateCategory" method="post" id="editCategoryForm">
+                    <input type="hidden" id="EditCategoryId" name="CategoryId" />
+                    <div class="form-group">
+                        <label for="EditCategoryName">Category Name</label>
+                        <input type="text" class="form-control" id="EditCategoryName" name="CategoryName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="EditCategoryDescription">Category Description</label>
+                        <textarea class="form-control" id="EditCategoryDescription" name="CategoryDescription"
+                            rows="3"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Update</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function editCategory(categoryId, categoryName, categoryDescription) {
+        // Set values in the edit modal
+        document.getElementById('EditCategoryId').value = categoryId;
+        document.getElementById('EditCategoryName').value = categoryName;
+        document.getElementById('EditCategoryDescription').value = categoryDescription;
+        document.getElementById('editCategoryModalLabel').innerText = 'Edit Category (ID: ' + categoryId + ')';
+
+        // Show the edit modal
+        $('#editCategoryModal').modal('show');
+    }
+</script>
