@@ -1,10 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "TnIZU2E589s=",
+  "dgSpecHash": "XrW3uKm/g8w=",
   "success": true,
   "projectFilePath": "D:\\project\\PETSHOP\\WebApp\\WebApp.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\khact\\.nuget\\packages\\dapper\\2.1.35\\dapper.2.1.35.nupkg.sha512",
+    "C:\\Users\\khact\\.nuget\\packages\\microsoft.aspnetcore.authentication.facebook\\8.0.10\\microsoft.aspnetcore.authentication.facebook.8.0.10.nupkg.sha512",
     "C:\\Users\\khact\\.nuget\\packages\\microsoft.aspnetcore.authentication.google\\8.0.10\\microsoft.aspnetcore.authentication.google.8.0.10.nupkg.sha512",
     "C:\\Users\\khact\\.nuget\\packages\\microsoft.netcore.platforms\\3.1.0\\microsoft.netcore.platforms.3.1.0.nupkg.sha512",
     "C:\\Users\\khact\\.nuget\\packages\\microsoft.win32.registry\\4.7.0\\microsoft.win32.registry.4.7.0.nupkg.sha512",

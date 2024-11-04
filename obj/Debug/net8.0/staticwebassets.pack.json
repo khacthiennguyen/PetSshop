@@ -337,6 +337,10 @@
       "PackagePath": "staticwebassets\\auth\\images\\divider.gif"
     },
     {
+      "Id": "D:\\project\\PETSHOP\\WebApp\\wwwroot\\auth\\images\\dog-6389277_640.jpg",
+      "PackagePath": "staticwebassets\\auth\\images\\dog-6389277_640.jpg"
+    },
+    {
       "Id": "D:\\project\\PETSHOP\\WebApp\\wwwroot\\auth\\images\\icons\\Accept.png",
       "PackagePath": "staticwebassets\\auth\\images\\icons\\Accept.png"
     },

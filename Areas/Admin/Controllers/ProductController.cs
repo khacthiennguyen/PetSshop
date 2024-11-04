@@ -1,11 +1,13 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebApp.Controllers;
 using WebApp.Models;
 
 namespace WebApp.Areas.Admin.Controllers;
 
-[Area("Admin")]
 
+[Area("Admin")]
+[Authorize(Roles = "0")]
 public class ProductController : BaseController
 {
 
@@ -22,7 +24,7 @@ public class ProductController : BaseController
     }
 
     [HttpPost]
-    public IActionResult AddCProduct(Product product)
+    public IActionResult AddProduct(Product product)
     {
 
         var existingProduct = Provider.Product.GetProducts().FirstOrDefault(c => c.ProductId == product.ProductId);

@@ -10,11 +10,21 @@ public class MemberRepository : BaseRepository
     public MemberRepository(IDbConnection connection) : base(connection) { }
 
 
-    public int Add(Member obj)
+    public int Add(dynamic member)
     {
-        return connection.Execute("AddMember", obj, commandType: CommandType.StoredProcedure);
-
+        var sql = "AddMember";
+        return connection.Execute(sql, new
+        {
+            MemberId = member.MemberId,
+            Name = member.Name,
+            SurName = member.SurName,
+            GivenName = member.GivenName,
+            Email = member.Email,
+            RoleId = member.RoleId,
+            Password = member.Password
+        }, commandType: CommandType.StoredProcedure);
     }
+
 
     public Member? FindMemberByEmail(string email)
     {

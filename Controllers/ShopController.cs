@@ -6,6 +6,8 @@ public class ShopController : BaseController
 {
     public IActionResult Index()
     {
-        return View();
+        var  AllProducts = Provider.Product.GetProducts().ToList();
+
+        return View(AllProducts);
     }
 }

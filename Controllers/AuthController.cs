@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Facebook;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity.UI.Services;
@@ -67,6 +68,41 @@ public class AuthController : BaseController
         return View();
     }
 
+    [HttpGet]
+    public IActionResult FacebookSignin()
+    {
+        var properties = new AuthenticationProperties
+        {
+            RedirectUri = Url.Action("FacebookResponse")
+        };
+        return Challenge(properties, FacebookDefaults.AuthenticationScheme);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> FacebookResponse(string? returnUrl = null)
+    {
+        var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+        if (result.Succeeded && result.Principal != null)
+        {
+            var claims = result.Principal.Claims;
+            var member = new
+            {
+                MemberId = claims.FirstOrDefault(p => p.Type == ClaimTypes.NameIdentifier)!.Value,
+                Name = claims.FirstOrDefault(p => p.Type == ClaimTypes.Name)!.Value,
+                SurName = claims.FirstOrDefault(p => p.Type == ClaimTypes.Surname)!.Value,
+                GivenName = claims.FirstOrDefault(p => p.Type == ClaimTypes.GivenName)!.Value,
+                Email = claims.FirstOrDefault(p => p.Type == ClaimTypes.Email)!.Value,
+                RoleId = 1,
+                Password = "asfdasfasd"
+            };
+            Provider.Member.Add(member);
+
+            return Redirect("/home");
+        }
+
+        return View();
+    }
 
     public IActionResult GoogleLogin()
     {
@@ -87,7 +123,7 @@ public class AuthController : BaseController
         if (result != null && result.Principal != null)
         {
             var claims = result.Principal.Claims;
-            var member = new Member
+            var member = new
             {
                 MemberId = claims.FirstOrDefault(p => p.Type == ClaimTypes.NameIdentifier)!.Value,
                 Name = claims.FirstOrDefault(p => p.Type == ClaimTypes.Name)!.Value,
@@ -122,6 +158,7 @@ public class AuthController : BaseController
                 new Claim(ClaimTypes.Email, member.Email),
                 new Claim(ClaimTypes.GivenName, member.GivenName),
                 new Claim(ClaimTypes.Surname,member.SurName),
+                new Claim(ClaimTypes.Role, member.RoleId.ToString())
                 };
 
             // Tạo ClaimsIdentity
@@ -148,7 +185,7 @@ public class AuthController : BaseController
     public IActionResult Register(Member obj)
     {
         var member = Provider.Member.FindMemberByEmail(obj.Email.ToLower());
-        if (member == null) 
+        if (member == null)
         {
             obj.MemberId = Guid.NewGuid().ToString().Replace("-", string.Empty);
             obj.Name = obj.GivenName + " " + obj.SurName;
@@ -159,6 +196,7 @@ public class AuthController : BaseController
                 return Redirect("/auth/login");
             }
         }
+
         ModelState.AddModelError("Error", "Email Exist");
         return View(obj);
     }
@@ -166,7 +204,6 @@ public class AuthController : BaseController
 
 
     [Authorize]
-
     public async Task<IActionResult> Logout()
     {
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);

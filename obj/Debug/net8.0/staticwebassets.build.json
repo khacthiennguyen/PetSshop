@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "ql1TxLtxypv59yuGXchb7qjJFpPNbuCBdZ5zPEgF4q4=",
+  "Hash": "vZi9hFXoQz4PNSXoCRCkYaPFtnVeGFwNdIa78achLQQ=",
   "Source": "WebApp",
   "BasePath": "_content/WebApp",
   "Mode": "Default",
@@ -1592,6 +1592,25 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\auth\\images\\divider.gif"
+    },
+    {
+      "Identity": "D:\\project\\PETSHOP\\WebApp\\wwwroot\\auth\\images\\dog-6389277_640.jpg",
+      "SourceId": "WebApp",
+      "SourceType": "Discovered",
+      "ContentRoot": "D:\\project\\PETSHOP\\WebApp\\wwwroot\\",
+      "BasePath": "_content/WebApp",
+      "RelativePath": "auth/images/dog-6389277_640.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\auth\\images\\dog-6389277_640.jpg"
     },
     {
       "Identity": "D:\\project\\PETSHOP\\WebApp\\wwwroot\\auth\\images\\icons\\Accept.png",

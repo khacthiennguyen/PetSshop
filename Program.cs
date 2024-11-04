@@ -22,6 +22,13 @@ builder.Services
     {
         options.ClientId = builder.Configuration["Authentication:Google:ClientId"] ?? throw new Exception("Not found ClientId");
         options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"] ?? throw new Exception("Not found ClientSecret");
+    })
+    .AddFacebook(options =>
+    {
+        options.ClientId = builder.Configuration["Authentication:Facebook:ClientId"]
+            ?? throw new Exception("Not found ClientId");
+        options.ClientSecret = builder.Configuration["Authentication:Facebook:ClientSecret"]
+            ?? throw new Exception("Not found ClientSecret");
     });
 
 builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
@@ -45,7 +52,7 @@ app.UseRouting();
 
 app.UseAuthorization();
 
-app.MapControllerRoute(name:"admin", pattern:"{area:exists}/{controller=home}/{action=index}/{id?}");
+app.MapControllerRoute(name: "admin", pattern: "{area:exists}/{controller=home}/{action=index}/{id?}");
 
 app.MapControllerRoute(
     name: "default",

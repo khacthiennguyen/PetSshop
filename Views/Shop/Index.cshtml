@@ -1,16 +1,87 @@
-<div class="row mt-4">
-    <div class="offcanvas-body d-flex justify-content-start align-items-center">
-        <div class="col-sm-6 col-lg-5 mx-auto d-none d-lg-block">
-            <div class="search-bar border rounded-2 px-3 border-dark-subtle">
-                <form id="search-form" class="text-center d-flex align-items-center" action="" method="">
-                    <input type="text" class="form-control border-0 bg-transparent"
-                        placeholder="Search for products..." />
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                        <path fill="currentColor"
-                            d="M21.71 20.29L18 16.61A9 9 0 1 0 16.61 18l3.68 3.68a1 1 0 0 0 1.42 0a1 1 0 0 0 0-1.39ZM11 18a7 7 0 1 1 7-7a7 7 0 0 1-7 7Z" />
-                    </svg>
-                </form>
+@{
+    ViewData["Title"] = "SHOP";
+}
+
+@model List<Product>
+
+<h1 class="text-center">@ViewData["Title"]</h1>
+<div class="row mt-2">
+    <div class="offcanvas-body d-flex justify-content-between align-items-center">
+        <div class="section-header d-md-flex align-items-center me-2">
+            <div>
+                <p class="m-5">
+                    <button class="filter-button me-4 active" data-filter="*">ALL</button>
+                    <button class="filter-button me-4" data-filter=".catclothes">CAT CLOTHES</button>
+                    <button class="filter-button me-4" data-filter=".dogclothes">DOG CLOTHES</button>
+                    <button class="filter-button me-4" data-filter=".catfood">CAT FOOD</button>
+                    <button class="filter-button me-4" data-filter=".dogfood">DOG FOOD</button>
+                </p>
+            </div>
+        </div>
+
+        <div class="section-header d-md-flex align-items-center m-5">
+            <div class=" d-none d-lg-block me-5">
+                <div class="search-bar border rounded-2 px-3 border-dark-subtle ">
+                    <form id="search-form" class="text-center" action="" method="">
+                        <input type="text" class="form-control border-0 bg-transparent"
+                            placeholder="Search for products..." />
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-</div>
+
+    <section id="products" class="my-2">
+        <div class="container my-2">
+            <div class="isotope-container row">
+                @foreach (var product in Model)
+                {
+                    string productType = product.CategoryId switch
+                    {
+                        "CATFOOD" => "catfood",
+                        "DOGFOOD" => "dogfood",
+                        "DOG-CLO" => "dogclothes",
+                        "CAT-CLO" => "catclothes",
+                        _ => "unknown"
+                    };
+
+                    <div class="item @productType col-md-4 col-lg-3 my-4">
+                        <div class="z-1 position-absolute rounded-3 m-3 px-3 border border-dark-subtle">
+                            @product.ProductStatus
+                        </div>
+                        <div class="card position-relative">
+                            <a href="single-product.html">
+                                <img src="@product.ProductImg" class="img-fluid rounded-4" alt="image"
+                                    style="width: 307px; height: 307px;">
+                            </a>
+                            <div class="card-body p-0">
+                                <a href="single-product.html">
+                                    <h3 class="card-title pt-4 m-0">@product.ProductName</h3>
+                                </a>
+
+                                <div class="card-text">
+                                    <span class="rating secondary-font">
+                                        @for (int i = 0; i < product.ProductStar; i++)
+                                        {
+                                            <iconify-icon icon="clarity:star-solid" class="text-primary"></iconify-icon>
+                                        }
+                                        @product.ProductStar</span>
+
+                                    <h3 class="secondary-font text-primary">@product.ProductPrice</h3>
+
+                                    <div class="d-flex flex-wrap mt-3">
+                                        <a href="#" class="btn-cart me-3 px-4 pt-3 pb-3">
+                                            <h5 class="text-uppercase m-0">Add to Cart</h5>
+                                        </a>
+                                        <a href="#" class="btn-wishlist px-4 pt-3">
+                                            <iconify-icon icon="fluent:heart-28-filled" class="fs-5"></iconify-icon>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </section>

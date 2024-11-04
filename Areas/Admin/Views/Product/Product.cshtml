@@ -29,13 +29,14 @@
                     <thead>
                         <tr>
                             <th>Product ID</th>
-                            <th>Product CategoryId</th>
+                            <th>Category ID</th>
                             <th>Product Name</th>
                             <th>Product Price</th>
-                            <th>Product Start</th>
+                            <th>Product Star</th>
                             <th>Product Quantity</th>
                             <th>Product Status</th>
                             <th>Product Description</th>
+                            <th>Product Image</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -50,10 +51,23 @@
                                 <td>@product.ProductStar</td>
                                 <td>@product.ProductQuantity</td>
                                 <td>@product.ProductStatus</td>
-                                <td>@product.ProductDescription</td>
+                                <td>
+                                    @if (product.ProductDescription != null && product.ProductDescription.Length > 20)
+                                    {
+                                        @product.ProductDescription.Substring(0, 7)
+                                        ;
+                                    }
+                                    else
+                                    {
+                                        @product.ProductDescription
+                                    }
+                                </td>
+                                <td>
+                                    <img src="@product.ProductImg" alt="" style="width:50px;height:50px;" />
+                                </td>
                                 <td>
                                     <button type="button" class="btn btn-warning btn-sm"
-                                        onclick="editProduct('@product.ProductId', '@product.CategoryId', '@product.ProductName', '@product.ProductPrice', '@product.ProductStar', '@product.ProductQuantity', '@product.ProductStatus', '@product.ProductDescription')">Edit</button>
+                                        onclick="editProduct('@product.ProductId', '@product.CategoryId', '@product.ProductName', '@product.ProductPrice', '@product.ProductStar', '@product.ProductQuantity', '@product.ProductStatus', '@product.ProductDescription', '@product.ProductImg')">Edit</button>
                                     <form asp-action="DeleteProduct" method="post" style="display:inline;">
                                         <input type="hidden" name="id" value="@product.ProductId" />
                                         <button type="submit" class="btn btn-danger btn-sm"
@@ -101,11 +115,18 @@
                     </div>
                     <div class="form-group">
                         <label for="ProductPrice">Product Price</label>
-                        <input type="number" class="form-control" id="ProductPrice" name="ProductPrice" required min="0>
+                        <input type="number" class="form-control" id="ProductPrice" name="ProductPrice" required
+                            min="0">
                     </div>
-                    <div class=" form-group">
-                        <label for="ProductStar">Product Start</label>
-                        <input type="text" class="form-control" id="ProductStar" name="ProductStar">
+                    <div class="form-group">
+                        <label for="ProductStar">Product Star</label>
+                        <select class="form-control" id="ProductStar" name="ProductStar" required>
+                            <option value="">Select Star Rating</option>
+                            @for (int i = 1; i <= 5; i++)
+                            {
+                                <option value="@i">@i</option>
+                            }
+                        </select>
                     </div>
                     <div class="form-group">
                         <label for="ProductQuantity">Product Quantity</label>
@@ -114,12 +135,24 @@
                     </div>
                     <div class="form-group">
                         <label for="ProductStatus">Product Status</label>
-                        <input type="text" class="form-control" id="ProductStatus" name="ProductStatus">
+                        <select class="form-control" id="ProductStatus" name="ProductStatus" required>
+                            <option value="">Select Status</option>
+                            <option value="Sale Off 10%">Sale Off 10%</option>
+                            <option value="Sale Off 20%">Sale Off 20%</option>
+                            <option value="Sale Off 50%">Sale Off 50%</option>
+                            <option value="Sold Out">Sold Out</option>
+                            <option value="Best Seller">Best Seller</option>
+                            <option value="Available">Available</option>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label for="ProductDescription">Product Description</label>
                         <textarea class="form-control" id="ProductDescription" name="ProductDescription"
                             rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="AddProductImg">Product Image URL</label>
+                        <input type="text" class="form-control" id="AddProductImg" name="ProductImg" required>
                     </div>
                     <button type="submit" class="btn btn-primary">Save</button>
                 </form>
@@ -133,17 +166,20 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="editProductModalLabel">Edit Product</h5>
+                <h5 class="modal-title" id="editProductModalLabel">Edit Product <p><strong>Product ID: </strong><span
+                            id="productIdDisplay"></span></p>
+                </h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
+
                 <form asp-action="UpdateProduct" method="post" id="editProductForm"
                     onsubmit="return validateEditProduct()">
                     <input type="hidden" id="EditProductId" name="ProductId" />
                     <div class="form-group">
-                        <label for="EditCategoryId">Category ID</label>
+                        <label for="EditCategoryId">Category</label>
                         <select class="form-control" id="EditCategoryId" name="CategoryId" required>
                             <option value="">Select Category</option>
                             @foreach (var category in ViewBag.Category)
@@ -162,8 +198,14 @@
                             min="0">
                     </div>
                     <div class="form-group">
-                        <label for="EditProductStar">Product Start</label>
-                        <input type="text" class="form-control" id="EditProductStar" name="ProductStar">
+                        <label for="EditProductStar">Product Star</label>
+                        <select class="form-control" id="EditProductStar" name="ProductStar" required>
+                            <option value="">Select Star Rating</option>
+                            @for (int i = 1; i <= 5; i++)
+                            {
+                                <option value="@i">@i</option>
+                            }
+                        </select>
                     </div>
                     <div class="form-group">
                         <label for="EditProductQuantity">Product Quantity</label>
@@ -172,12 +214,25 @@
                     </div>
                     <div class="form-group">
                         <label for="EditProductStatus">Product Status</label>
-                        <input type="text" class="form-control" id="EditProductStatus" name="ProductStatus">
+                        <select class="form-control" id="EditProductStatus" name="ProductStatus" required>
+                            <option value="">Select Status</option>
+                            <option value="Sale Off 10%">Sale Off 10%</option>
+                            <option value="Sale Off 20%">Sale Off 20%</option>
+                            <option value="Sale Off 50%">Sale Off 50%</option>
+                            <option value="Sold Out">Sold Out</option>
+                            <option value="Best Seller">Best Seller</option>
+                            <option value="Available">Available</option>
+                        </select>
                     </div>
+
                     <div class="form-group">
                         <label for="EditProductDescription">Product Description</label>
                         <textarea class="form-control" id="EditProductDescription" name="ProductDescription"
                             rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="EditProductImg">Product Image URL</label>
+                        <input type="text" class="form-control" id="EditProductImg" name="ProductImg" required>
                     </div>
                     <button type="submit" class="btn btn-primary">Update</button>
                 </form>
@@ -187,40 +242,19 @@
 </div>
 
 <script>
-    function editProduct(productId, categoryId, productName, productPrice, productStar, productQuantity, productStatus, productDescription) {
-        // Set values in the edit modal
-        document.getElementById('EditProductId').value = productId;
-        document.getElementById('EditCategoryId').value = categoryId;
-        document.getElementById('EditProductName').value = productName;
-        document.getElementById('EditProductPrice').value = productPrice;
-        document.getElementById('EditProductStar').value = productStar;
-        document.getElementById('EditProductQuantity').value = productQuantity;
-        document.getElementById('EditProductStatus').value = productStatus;
-        document.getElementById('EditProductDescription').value = productDescription;
-
-        // Show the edit modal
+    document.getElementById('editProductModalLabel').innerText = 'Edit Product (ID: ' + productId + ')';
+    // Edit product function
+    function editProduct(productId, categoryId, productName, productPrice, productStar, productQuantity, productStatus, productDescription, productImg) {
+        $('#productIdDisplay').text(productId);
+        $('#EditProductId').val(productId);
+        $('#EditCategoryId').val(categoryId);
+        $('#EditProductName').val(productName);
+        $('#EditProductPrice').val(productPrice);
+        $('#EditProductStar').val(productStar);
+        $('#EditProductQuantity').val(productQuantity);
+        $('#EditProductStatus').val(productStatus);
+        $('#EditProductDescription').val(productDescription);
+        $('#EditProductImg').val(productImg);
         $('#editProductModal').modal('show');
-    }
-
-    function validateAddProduct() {
-        // Validate the input for adding product
-        var price = parseFloat(document.getElementById('ProductPrice').value);
-        var quantity = parseInt(document.getElementById('ProductQuantity').value);
-        if (price < 0 || quantity < 0) {
-            alert("Price and quantity must be non-negative.");
-            return false;
-        }
-        return true;
-    }
-
-    function validateEditProduct() {
-        // Validate the input for editing product
-        var price = parseFloat(document.getElementById('EditProductPrice').value);
-        var quantity = parseInt(document.getElementById('EditProductQuantity').value);
-        if (price < 0 || quantity < 0) {
-            alert("Price and quantity must be non-negative.");
-            return false;
-        }
-        return true;
     }
 </script>

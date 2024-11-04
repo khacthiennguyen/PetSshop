@@ -15,6 +15,7 @@ public class ProductRepository : BaseRepository
         return connection.Query<Product>("SELECT * FROM Product");
     }
 
+
     // Thêm sản phẩm mới
     public int Add(Product obj)
     {
@@ -56,4 +57,19 @@ public class ProductRepository : BaseRepository
             "CategoryId = @CategoryId, ProductImg = @ProductImg WHERE ProductId = @ProductId",
             obj);
     }
+
+
+
+public IEnumerable<Product> GetAllClothes()
+{
+    return connection.Query<Product>("SELECT * FROM Product WHERE CategoryId IN ('CAT-CLO', 'DOG-CLO')");
+}
+
+public  IEnumerable<Product> GetAllFood(){
+    return connection.Query<Product>("SELECT * FROM Product WHERE CategoryId IN ('CATFOOD', 'DOGFOOD')");
+}
+
+
+
+
 }

@@ -2,9 +2,10 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using WebApp.Models;
 
+
 namespace WebApp.Controllers;
 
-public class HomeController : Controller
+public class HomeController : BaseController
 {
     private readonly ILogger<HomeController> _logger;
 
@@ -15,10 +16,16 @@ public class HomeController : Controller
 
     public IActionResult Index()
     {
-        return View();
+        var viewModel = new ProductsViewModel
+        {
+            FoodProducts = Provider.Product.GetAllFood().ToList(),
+            ClothesProducts = Provider.Product.GetAllClothes().ToList(),
+            BestSellerProducts = Provider.Product.GetProducts().ToList().Where(p => p.ProductStatus == "Best Seller").ToList(),
+        };
+        return View(viewModel);
     }
 
-    public IActionResult Privacy()
+    public IActionResult Contact()
     {
         return View();
     }
