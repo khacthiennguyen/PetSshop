@@ -1,0 +1,87 @@
+@model IEnumerable<Cart>
+
+@if (Model == null || !Model.Any())
+{
+    <h2 class="text-center text-primary">Your Cart is empty, please <a href="/shop"
+            class="btn btn-link text-primary">shopping</a>!</h2>
+}
+else
+{
+    <div class="container mt-5">
+        <div class="card shadow-lg">
+            <div class="card-header bg-primary text-white text-center">
+                <h4>Your Shopping Cart</h4>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered table-striped">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Product</th>
+                            <th>Image</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Amount</th>
+                            <th>Command</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr v="@item.ProductId">
+                                <td>@item.ProductName</td>
+                                <td>
+                                    <img width="80" src="@item.ProductImg" alt="@item.ProductName" class="img-fluid rounded">
+                                </td>
+                                <td>@item.ProductPrice</td>
+                                <td>
+                                    <input class="qty form-control" type="number" min="1" value="@item.ProductQuantity" max="10"
+                                        data-item-price="@item.ProductPrice">
+                                </td>
+                                <td>@(item.ProductQuantity * item.ProductPrice)</td>
+                                <td>
+                                    <a class="btn btn-danger" href="/cart/delete/@item.ProductId">Delete</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <th class="text-center" colspan="4">Total</th>
+                            <td>
+                                <h5>@Model.Sum(p => p.ProductPrice * p.ProductQuantity)</h5>
+                            </td>
+                            <td>
+                                <div class="text-centre">
+                                    <a href="/cart/checkout" class="btn btn-outline-primary ">Check Out</a>
+                                </div>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+}
+
+<script>
+    $('.qty').change(function () {
+        let o = { 'ProductQuantity': $(this).val(), 'ProductId': $(this).closest('tr').attr('v') };
+        console.log(o);
+        $.ajax({
+            url: '/cart/edit',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(o),
+            success: function (d) {
+                console.log(d);
+                setTimeout(function () {
+                    window.location.reload();
+                }, 1000); // đợi 1000 mili giây, tức là 1 giây
+            },
+            error: function (xhr, status, error) {
+                console.error('Error:', error);
+                alert('An error occurred while updating the cart. Please try again.');
+            }
+        });
+    });
+</script>

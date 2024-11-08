@@ -59,15 +59,32 @@ public class ProductRepository : BaseRepository
     }
 
 
+    public IEnumerable<Product> GetAllClothes()
+    {
+        return connection.Query<Product>("SELECT * FROM Product WHERE CategoryId IN ('CAT-CLO', 'DOG-CLO')");
+    }
 
-public IEnumerable<Product> GetAllClothes()
-{
-    return connection.Query<Product>("SELECT * FROM Product WHERE CategoryId IN ('CAT-CLO', 'DOG-CLO')");
-}
+    public IEnumerable<Product> GetAllFood()
+    {
+        return connection.Query<Product>("SELECT * FROM Product WHERE CategoryId IN ('CATFOOD', 'DOGFOOD')");
+    }
 
-public  IEnumerable<Product> GetAllFood(){
-    return connection.Query<Product>("SELECT * FROM Product WHERE CategoryId IN ('CATFOOD', 'DOGFOOD')");
-}
+
+
+    public Product? GetProduct(string ProductId)
+    {
+        string sql = "SELECT * from Product WHERE ProductId = @ProductId";
+        return connection.QuerySingleOrDefault<Product>(sql, new { ProductId });
+
+    }
+
+    //get product relation , sản phẩm liên quan
+    public IEnumerable<Product> GetProductsRelation(string CategoryId, string ProductId)
+    {
+        string sql = "SELECT * FROM Product WHERE CategoryId = @CategoryId AND ProductId<> @ProductId";
+        return connection.Query<Product>(sql, new { CategoryId, ProductId });
+    }
+
 
 
 

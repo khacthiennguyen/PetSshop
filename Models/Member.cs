@@ -8,7 +8,6 @@ public class Member
     public string Name { get; set; } = null!;
     public string GivenName { get; set; } = null!;
     public string? SurName { get; set; }
-    public int RoleId { get; set; }
-    public string? RoleName { get; set; }
+    public string Role { get; set; } =  null!;
 
 }

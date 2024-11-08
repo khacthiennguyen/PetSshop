@@ -6,7 +6,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 
 
-
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
@@ -33,6 +32,14 @@ builder.Services
 
 builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
 builder.Services.AddScoped<IEmailSender, EmailSender>();
+
+
+//VNPAY payment service 
+builder.Services.AddHttpContextAccessor();
+builder.Services.Configure<VnPayment>(builder.Configuration.GetSection("Payment:VnPayment"));
+builder.Services.AddScoped<VnPaymentService>();
+// end service payment 
+
 
 
 var app = builder.Build();

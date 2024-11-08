@@ -20,6 +20,7 @@
 
     <link rel="stylesheet" type="text/css" href="/css/vendor.css">
     <link rel="stylesheet" type="text/css" href="/style.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -100,6 +101,9 @@
         </div>
     </div>
 
+
+    <!-- your  cart -->
+
     <div class="offcanvas offcanvas-end" data-bs-scroll="true" tabindex="-1" id="offcanvasCart"
         aria-labelledby="My Cart">
         <div class="offcanvas-header justify-content-center">
@@ -109,7 +113,7 @@
             <div class="order-md-last">
                 <h4 class="d-flex justify-content-between align-items-center mb-3">
                     <span class="text-primary">Your cart</span>
-                    <span class="badge bg-primary rounded-circle pt-2">3</span>
+                    <span class="badge bg-primary rounded-circle pt-2"> quantit </span>
                 </h4>
                 <ul class="list-group mb-3">
                     <li class="list-group-item d-flex justify-content-between lh-sm">
@@ -197,7 +201,7 @@
                             </li>
                         }
 
-                        @if (User.IsInRole("0"))
+                        @if (User.IsInRole("Admin"))
                         {
                             <li class="nav-item">
                                 <a class="nav-link" href="/admin"> GO TO ADMIN MANAGMENT DASHBOARD</a>
@@ -215,17 +219,23 @@
                             <span class="nav-link">Welcome, @User.Identity.Name</span>
                             <div class="nav-link" href="#"><i class="fas fa-heart"></i></div>
                             <div class="nav-link" href="#"><i class="fas fa-shopping-cart"></i></div>
-                            <div class="nav-link"> <a href="wishlist.html" class="mx-3">
+                            <div class="nav-link"> <a
+                                    href="/home/lovelist/@User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value"
+                                    class="mx-3">
                                     <iconify-icon icon="mdi:heart" class="fs-4"></iconify-icon>
                                 </a>
                             </div>
                             <div class="nav-link">
-                                <a href="#" class="mx-3" data-bs-toggle="offcanvas" data-bs-target="#offcanvasCart"
-                                    aria-controls="offcanvasCart">
+                                @* <a href="#" class="mx-3" data-bs-toggle="offcanvas" data-bs-target="#offcanvasCart"
+                            aria-controls="offcanvasCart">
+                            <iconify-icon icon="mdi:cart" class="fs-4 position-relative"></iconify-icon>
+                            <span class="position-absolute translate-middle badge rounded-circle bg-primary pt-2">
+
+                            </span>
+                            </a> *@
+
+                                <a href="/cart" class="mx-3">
                                     <iconify-icon icon="mdi:cart" class="fs-4 position-relative"></iconify-icon>
-                                    <span class="position-absolute translate-middle badge rounded-circle bg-primary pt-2">
-                                        03
-                                    </span>
                                 </a>
 
                             </div>

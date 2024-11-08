@@ -18,19 +18,19 @@ public class SiteProvider : BaseProvider
     public ProductRepository Product => product
     ??= new ProductRepository(Connection);
 
-    // SupplierRepository? supplier;
-    // public SupplierRepository Supplier => supplier
-    // ??= new SupplierRepository(Connection);
+    LoveListRepository? loveList;
+    public LoveListRepository LoveList => loveList
+    ??= new LoveListRepository(Connection);
 
-    // CartRepository? cart;
-    // public CartRepository Cart => cart
+    CartRepository? cart;
+    public CartRepository Cart => cart
 
-    // ??= new CartRepository(Connection);
+    ??= new CartRepository(Connection);
 
-    // InvoiceRepository? invoice;
-    // public InvoiceRepository Invoice => invoice
+    InvoiceRepository? invoice;
+    public InvoiceRepository Invoice => invoice
 
-    // ??= new InvoiceRepository(Connection);
+    ??= new InvoiceRepository(Connection);
 
     // EmployeeRepository? employee;
     // public EmployeeRepository Employee => employee

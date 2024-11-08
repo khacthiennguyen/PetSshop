@@ -15,6 +15,8 @@ public class CategoryRepository : BaseRepository
         return connection.Query<Category>("SELECT * FROM Category");
     }
 
+    
+
     public int Add(Category obj)
     {
         var existingCategory = connection.QueryFirstOrDefault<Category>(

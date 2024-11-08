@@ -6,7 +6,7 @@ using WebApp.Controllers;
 namespace WebApp.Areas.Admin.Controllers;
 
 [Area("Admin")]
-[Authorize(Roles = "0")]
+[Authorize(Roles = "Admin")]
 public class HomeController : BaseController
 
 {

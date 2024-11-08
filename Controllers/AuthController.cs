@@ -86,23 +86,35 @@ public class AuthController : BaseController
         if (result.Succeeded && result.Principal != null)
         {
             var claims = result.Principal.Claims;
-            var member = new
-            {
-                MemberId = claims.FirstOrDefault(p => p.Type == ClaimTypes.NameIdentifier)!.Value,
-                Name = claims.FirstOrDefault(p => p.Type == ClaimTypes.Name)!.Value,
-                SurName = claims.FirstOrDefault(p => p.Type == ClaimTypes.Surname)!.Value,
-                GivenName = claims.FirstOrDefault(p => p.Type == ClaimTypes.GivenName)!.Value,
-                Email = claims.FirstOrDefault(p => p.Type == ClaimTypes.Email)!.Value,
-                RoleId = 1,
-                Password = "asfdasfasd"
-            };
-            Provider.Member.Add(member);
 
-            return Redirect("/home");
+            var member = new Member
+            {
+                MemberId = claims.FirstOrDefault(p => p.Type == ClaimTypes.NameIdentifier)?.Value ?? "",
+                Name = claims.FirstOrDefault(p => p.Type == ClaimTypes.Name)?.Value ?? "",
+                SurName = claims.FirstOrDefault(p => p.Type == ClaimTypes.Surname)?.Value ?? "",
+                GivenName = claims.FirstOrDefault(p => p.Type == ClaimTypes.GivenName)?.Value ?? "",
+                Email = claims.FirstOrDefault(p => p.Type == ClaimTypes.Email)?.Value ?? "",
+                Role = claims.FirstOrDefault(p => p.Type == ClaimTypes.Role)?.Value ?? "",
+                Password = "defaultPassword" // Bạn có thể thay đổi giá trị mật khẩu mặc định hoặc xử lý mật khẩu khác
+            };
+
+            // Kiểm tra nếu email có giá trị hợp lệ trước khi thêm vào database
+            if (!string.IsNullOrEmpty(member.Email))
+            {
+                Provider.Member.Add(member);
+                return Redirect(returnUrl ?? "/home");
+            }
+            else
+            {
+                // Trường hợp lỗi không có email
+                TempData["Error"] = "Unable to retrieve user email from Facebook login.";
+                return Redirect("/auth/error");
+            }
         }
 
-        return View();
+        return Redirect("/auth/error");
     }
+
 
     public IActionResult GoogleLogin()
     {
@@ -123,18 +135,30 @@ public class AuthController : BaseController
         if (result != null && result.Principal != null)
         {
             var claims = result.Principal.Claims;
-            var member = new
+
+            var member = new Member
             {
-                MemberId = claims.FirstOrDefault(p => p.Type == ClaimTypes.NameIdentifier)!.Value,
-                Name = claims.FirstOrDefault(p => p.Type == ClaimTypes.Name)!.Value,
-                SurName = claims.FirstOrDefault(p => p.Type == ClaimTypes.Surname)!.Value,
-                GivenName = claims.FirstOrDefault(p => p.Type == ClaimTypes.GivenName)!.Value,
-                Email = claims.FirstOrDefault(p => p.Type == ClaimTypes.Email)!.Value,
-                RoleId = 1,
-                Password = "asfdasfasd"
+                MemberId = claims.FirstOrDefault(p => p.Type == ClaimTypes.NameIdentifier)?.Value ?? "",
+                Name = claims.FirstOrDefault(p => p.Type == ClaimTypes.Name)?.Value ?? "",
+                SurName = claims.FirstOrDefault(p => p.Type == ClaimTypes.Surname)?.Value ?? "",
+                GivenName = claims.FirstOrDefault(p => p.Type == ClaimTypes.GivenName)?.Value ?? "",
+                Email = claims.FirstOrDefault(p => p.Type == ClaimTypes.Email)?.Value ?? "",
+                Role = claims.FirstOrDefault(p => p.Type == ClaimTypes.Role)?.Value ?? "",
+                Password = "asfdasfasd" // Mật khẩu giả định, cần cập nhật trong môi trường thực
             };
-            Provider.Member.Add(member);
+
+            // Kiểm tra xem member có hợp lệ không trước khi thêm vào cơ sở dữ liệu
+            if (!string.IsNullOrEmpty(member.Email))
+            {
+                Provider.Member.Add(member);
+            }
+            else
+            {
+                // Xử lý nếu thông tin không hợp lệ (chẳng hạn chuyển hướng đến trang lỗi)
+                return Redirect("/auth/error");
+            }
         }
+
         return Redirect("/home");
     }
 
@@ -158,7 +182,7 @@ public class AuthController : BaseController
                 new Claim(ClaimTypes.Email, member.Email),
                 new Claim(ClaimTypes.GivenName, member.GivenName),
                 new Claim(ClaimTypes.Surname,member.SurName),
-                new Claim(ClaimTypes.Role, member.RoleId.ToString())
+                new Claim(ClaimTypes.Role, member.Role)
                 };
 
             // Tạo ClaimsIdentity
@@ -166,7 +190,7 @@ public class AuthController : BaseController
 
             // Đăng nhập với ClaimsPrincipal
             var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
-            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claimsPrincipal);
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claimsPrincipal, new AuthenticationProperties { IsPersistent = obj.Rem });
 
             return Redirect("/home");
         }
@@ -189,7 +213,7 @@ public class AuthController : BaseController
         {
             obj.MemberId = Guid.NewGuid().ToString().Replace("-", string.Empty);
             obj.Name = obj.GivenName + " " + obj.SurName;
-            obj.RoleId = 1;
+            obj.Role = Role.Customer.ToString();
             int ret = Provider.Member.Add(obj);
             if (ret > 0)
             {
@@ -215,6 +239,14 @@ public class AuthController : BaseController
     {
         return View();
     }
+
+
+
+    public IActionResult Denied()
+    {
+        return View();
+    }
+
 
 
 }

@@ -1,4 +1,5 @@
 using System.Data;
+using System.Runtime.InteropServices;
 using Dapper;
 
 namespace WebApp.Models;
@@ -10,19 +11,14 @@ public class MemberRepository : BaseRepository
     public MemberRepository(IDbConnection connection) : base(connection) { }
 
 
-    public int Add(dynamic member)
+    public int Add(Member member)
     {
-        var sql = "AddMember";
-        return connection.Execute(sql, new
+        if (string.IsNullOrEmpty(member.Role))
         {
-            MemberId = member.MemberId,
-            Name = member.Name,
-            SurName = member.SurName,
-            GivenName = member.GivenName,
-            Email = member.Email,
-            RoleId = member.RoleId,
-            Password = member.Password
-        }, commandType: CommandType.StoredProcedure);
+            member.Role = Role.Customer.ToString();
+        }
+        return connection.Execute("AddMember", member, commandType: CommandType.StoredProcedure);
+
     }
 
 
@@ -39,7 +35,7 @@ public class MemberRepository : BaseRepository
 
     public IEnumerable<Member> GetMembers()
     {
-        return connection.Query<Member>(" select MemberId, Email, SurName, GivenName, Roles.RoleName from Member  join Roles on Member.RoleId = Roles.RoleId");
+        return connection.Query<Member>(" select * from Member ");
     }
 
     public string? GenerateToken(string email)
@@ -67,6 +63,16 @@ public class MemberRepository : BaseRepository
         return connection.QueryFirstOrDefault<Member>(sql, new { obj.Eml, obj.Pwd });
     }
 
+    public int DeleteMember(string id)
+    {
+        string sql = "DELETE FROM Member WHERE MemberId = @id";
+        return connection.Execute(sql, new { id });
+    }
+
+    public int UpdateMemberRole(string MemberId, string Role)
+    {
+        return connection.Execute("UPDATE Member SET Role = @Role WHERE MemberId = @MemberId",new{MemberId,Role});
+    }
 
 
 }
