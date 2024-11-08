@@ -17,14 +17,14 @@ public class CartRepository : BaseRepository
 
     public int Add(Cart obj)
     {
-        return connection.Execute("AddCart", new { obj.CartCode, obj.ProductId, obj.ProductQuantity },
+        return connection.Execute("AddCart", new { obj.CartCode, obj.ProductId, obj.MemberId, obj.ProductQuantity },
                                   commandType: CommandType.StoredProcedure);
     }
 
-    public IEnumerable<Cart> GetCarts(string code)
+    public IEnumerable<Cart> GetCarts(string code,string MemberId)
     {
-        string sql = "SELECT Cart.*, ProductName, ProductPrice, ProductImg FROM Cart JOIN Product ON Cart.ProductId = Product.ProductId AND Cart.CartCode = @code";
-        return connection.Query<Cart>(sql, new { code });
+        string sql = "SELECT Cart.*, Product.ProductName, Product.ProductPrice, Product.ProductImg FROM Cart JOIN Product ON Cart.ProductId = Product.ProductId WHERE Cart.CartCode = @code AND Cart.MemberId = @MemberId";
+        return connection.Query<Cart>(sql, new { code, MemberId});
     }
 
     public int Delete(string cartCode, string productId)

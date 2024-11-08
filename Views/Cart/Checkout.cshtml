@@ -1,63 +1,70 @@
 @model IEnumerable<Cart>
+<h2 class="text-center">Check Out</h2>
+<div class="container mt-4">
+    <div class="row">
+        <!-- Form Section -->
+        <div class="col-md-7">
+            <form method="post">
 
-<div class="row">
-    <div class="col-7">
-        <form method="post">
-            <div class="row mb-1">
-                <label for="" class="col-2 form-label"> Full Name</label>
-                <div class="col-10">
-                    <input required type="text" class="form-control" name="fullname">
+                <div class="row mb-3">
+                    <label for="fullname" class="col-sm-3 col-form-label">Full Name</label>
+                    <div class="col-sm-9">
+                        <input required type="text" class="form-control" name="fullname" id="fullname">
+                    </div>
                 </div>
-            </div>
-            <div class="row mb-1">
-                <label for="" class="col-2 form-label">Email</label>
-                <div class="col-10">
-                    <input required type="text" class="form-control" name="email">
+                <div class="row mb-3">
+                    <label for="email" class="col-sm-3 col-form-label">Email</label>
+                    <div class="col-sm-9">
+                        <input required type="email" class="form-control" name="email" id="email">
+                    </div>
                 </div>
-            </div>
-            <div class="row mb-1">
-                <label for="" class="col-2 form-label"> Phone</label>
-                <div class="col-10">
-                    <input required type="text" class="form-control" name="phone">
+                <div class="row mb-3">
+                    <label for="phone" class="col-sm-3 col-form-label">Phone</label>
+                    <div class="col-sm-9">
+                        <input required type="text" class="form-control" name="phone" id="phone">
+                    </div>
                 </div>
-            </div>
-            <div class="row mb-1">
-                <label for="" class="col-2 form-label">Address</label>
-                <div class="col-10">
-                    <input required type="text" class="form-control" name="address">
+                <div class="row mb-3">
+                    <label for="address" class="col-sm-3 col-form-label">Address</label>
+                    <div class="col-sm-9">
+                        <input required type="text" class="form-control" name="address" id="address">
+                    </div>
                 </div>
-            </div>
-            <div>
-                <button class="btn btn-primary"> Confirm checkout </button>
-            </div>
+                <!-- Hidden Field to Send Total Amount -->
+                <input type="hidden" name="totalAmount" value="@ViewBag.TotalAmount" />
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-primary w-100">Confirm Checkout</button>
+                </div>
+            </form>
+        </div>
 
-        </form>
-    </div>
-    <div class="col-5">
-        <table class="table table-bordered">
-            <thead class="table-dark">
-                <tr>
-                    <th>Name</th>
-                    <th>Price</th>
-                    <th>Quantity</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model)
-                {
+        <!-- Cart Items Section -->
+        <div class="col-md-5">
+            <table class="table table-bordered">
+                <thead class="table-dark">
                     <tr>
-                        <td>@item.ProductName</td>
-                        <td>@item.ProductPrice</td>
-                        <td>@item.ProductQuantity</td>
+                        <th>Name</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
                     </tr>
-
-                }
-            </tbody>
-            <tfoot>
-                <tr>
-                    <td colspan="2">@Model.Sum(p => p.ProductPrice * p.ProductQuantity)</td>
-                </tr>
-            </tfoot>
-        </table>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.ProductName</td>
+                            <td>@item.ProductPrice</td>
+                            <td>@item.ProductQuantity</td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="2" class="text-end fw-bold">Total:</td>
+                        <td>@ViewBag.TotalAmount</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
     </div>
 </div>

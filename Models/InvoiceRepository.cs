@@ -23,24 +23,48 @@ public class InvoiceRepository : BaseRepository
 
     public int Add(Invoice obj)
     {
+        if (string.IsNullOrEmpty(obj.Status))
+        {
+            obj.Status = "Pending";
+        }
         return connection.Execute("AddInvoice", new
         {
-            obj.CartCode,
-            obj.InvoiceId,
-            obj.InvoiceDate,
-            obj.FullName,
-            obj.Email,
-            obj.Phone,
-            obj.Address
+            obj.CartCode,           // Mã giỏ hàng
+            obj.InvoiceId,          // ID hóa đơn
+            obj.MemberId,           // ID thành viên (khách hàng)
+            obj.InvoiceDate,        // Ngày hóa đơn
+            obj.FullName,           // Tên người nhận
+            obj.Email,              // Email người nhận
+            obj.Phone,              // Số điện thoại người nhận
+            obj.Address,// Địa chỉ người nhận
+            obj.Status,
         }, commandType: CommandType.StoredProcedure);
-
     }
+
+
 
     public decimal GetAmountInvoice(long id)
     {
         return connection.ExecuteScalar<decimal>("GetAmountInvoice", new { InvoiceId = id }, commandType: CommandType.StoredProcedure);
 
     }
+
+
+    public IEnumerable<Invoice> GetOrdersByMemberId(string memberId)
+    {
+        string query = @"
+        SELECT i.InvoiceId, i.InvoiceDate, i.Fullname, i.Email, i.Phone, i.Address, i.Status, i.Amount
+        FROM Invoice i
+        WHERE i.MemberId = @MemberId
+        ORDER BY i.InvoiceDate DESC;
+    ";
+
+        return connection.Query<Invoice>(query, new { MemberId = memberId });
+    }
+
+
+
+
 
 
 }

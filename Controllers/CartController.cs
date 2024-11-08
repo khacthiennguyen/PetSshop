@@ -23,10 +23,21 @@ namespace WebApp.Controllers
             string? code = Request.Cookies[cart];
             if (string.IsNullOrEmpty(code))
             {
-                return Redirect("/");
+                return Redirect("/"); // Nếu không có CartCode, chuyển hướng về trang chủ
             }
-            return View(Provider.Cart.GetCarts(code));
+
+            // Lấy MemberId từ claim
+            var memberId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(memberId))
+            {
+                return Redirect("/login"); // Chuyển hướng đến trang đăng nhập nếu không có MemberId
+            }
+
+            // Lấy giỏ hàng với CartCode và MemberId
+            var cartItems = Provider.Cart.GetCarts(code, memberId);
+            return View(cartItems);
         }
+
 
         [HttpPost]
         public IActionResult Edit([FromBody] Cart obj)
@@ -50,6 +61,26 @@ namespace WebApp.Controllers
         }
 
 
+        // [HttpPost]
+        // public IActionResult Add(Cart obj)
+        // {
+        //     // Cookies
+        //     string? code = Request.Cookies[cart];
+        //     if (string.IsNullOrEmpty(code))
+        //     {
+        //         code = Guid.NewGuid().ToString().Replace("-", "");
+        //         Response.Cookies.Append(cart, code);
+        //     }
+        //     obj.CartCode = code;
+
+        //     int ret = Provider.Cart.Add(obj);
+        //     if (ret > 0)
+        //     {
+        //         return Redirect("/cart");
+        //     }
+        //     return Redirect("/cart/error");
+        // }
+
         [HttpPost]
         public IActionResult Add(Cart obj)
         {
@@ -61,6 +92,17 @@ namespace WebApp.Controllers
                 Response.Cookies.Append(cart, code);
             }
             obj.CartCode = code;
+
+            // Lấy userId từ NameIdentifier claim
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            if (!string.IsNullOrEmpty(userId))
+            {
+                obj.MemberId = userId;
+            }
+            else
+            {
+                return Redirect("/cart/error"); // Trả về trang lỗi nếu không có userId
+            }
 
             int ret = Provider.Cart.Add(obj);
             if (ret > 0)
@@ -91,36 +133,65 @@ namespace WebApp.Controllers
             string? code = Request.Cookies[cart];
             if (string.IsNullOrEmpty(code))
             {
-                return Redirect("/");
+                return Redirect("/"); // Nếu không có CartCode trong cookie, chuyển hướng về trang chủ
             }
-            return View(Provider.Cart.GetCarts(code));
 
+            // Lấy MemberId từ claim
+            var memberId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(memberId))
+            {
+                return Redirect("/login"); // Nếu không có MemberId, chuyển hướng đến trang đăng nhập
+            }
+
+            // Lấy giỏ hàng với CartCode và MemberId
+            var cartItems = Provider.Cart.GetCarts(code, memberId);
+            decimal totalAmount = cartItems.Sum(p => p.ProductPrice * p.ProductQuantity);
+            ViewBag.TotalAmount = totalAmount;
+            return View(cartItems);
         }
+
 
         [HttpPost]
         public IActionResult Checkout(Invoice obj)
         {
-            string? code = Request.Cookies[cart];
+            // Kiểm tra nếu không có CartCode trong cookie
+            string? code = Request.Cookies["cart"];
             if (string.IsNullOrEmpty(code))
             {
-                return Redirect("/");
+                return Redirect("/");  // Nếu không có giỏ hàng, chuyển hướng về trang chủ
             }
 
+            // Lấy thông tin MemberId từ người dùng đang đăng nhập
+            string memberId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)!.Value;
+            if (string.IsNullOrEmpty(memberId))
+            {
+                // Nếu không có MemberId, có thể điều hướng đến trang đăng nhập hoặc thông báo lỗi
+                return Redirect("/login");
+            }
+
+            // Tạo InvoiceId ngẫu nhiên
             Random random = new Random();
-            obj.InvoiceId = random.NextInt64(99999999, 9999999999999);
+            obj.InvoiceId = random.NextInt64(9999999, 99999999999999);
             obj.CartCode = code;
             obj.InvoiceDate = DateTime.Now;
+            obj.MemberId = memberId;  // Gán MemberId
+            obj.Status = "Pending";  // Gán trạng thái, ví dụ: "Processing"
+
+            // Thực hiện thêm hóa đơn vào cơ sở dữ liệu
             int ret = Provider.Invoice.Add(obj);
             if (ret > 0)
             {
-                obj.Amount = Provider.Invoice.GetAmountInvoice(obj.InvoiceId) * 1000; //Dùng VND
-                string url = vnPayment.ToUrl(obj);
-                return Redirect(url);
-
+                return Redirect("/cart/payment");  // Thành công, chuyển hướng đến trang thành công
             }
-            return Redirect("/cart/error");
 
+            return Redirect("/cart/error");  // Thất bại, chuyển hướng đến trang lỗi
         }
+
+        public IActionResult Payment()
+        {
+            return View();
+        }
+
     }
 
 

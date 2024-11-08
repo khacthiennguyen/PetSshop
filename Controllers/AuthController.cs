@@ -181,7 +181,7 @@ public class AuthController : BaseController
                 new Claim(ClaimTypes.Name, member.Name),
                 new Claim(ClaimTypes.Email, member.Email),
                 new Claim(ClaimTypes.GivenName, member.GivenName),
-                new Claim(ClaimTypes.Surname,member.SurName),
+                new Claim(ClaimTypes.Surname,member.SurName!),
                 new Claim(ClaimTypes.Role, member.Role)
                 };
 
